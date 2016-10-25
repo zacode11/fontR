@@ -63,7 +63,7 @@ def load_predict_set(dir_name):
     
 def gray_image_to_array(img):
     img_array = np.asarray(img)
-    binary = img_array > 0
+    binary = img_array < 255
     bin_array = binary.astype(int)
     
     return bin_array
