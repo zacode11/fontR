@@ -29,6 +29,7 @@ def result(request):
 
     fonts = []
     for i in xrange(10):
-        fonts.append((data["data"][i]["font"],(int)(data["data"][i]["popularity"])))
+        fonts.append((data["data"][i]["font"],(int)(100*(data["data"][i]["popularity"]))))
 
     return render(request, 'fonts/result.html', {'fonts':fonts})
+
