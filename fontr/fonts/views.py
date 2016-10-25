@@ -4,14 +4,19 @@ from django.http import HttpResponseRedirect
 from .models import Document
 from .forms import DocumentForm
 
+import datetime
 
+import json
+
+x = ""
 def index(request):
     if request.method == 'POST':
         form = DocumentForm(request.POST, request.FILES)
         if form.is_valid():
             newdoc = Document(docfile=request.FILES['docfile'])
             newdoc.save()
-            # put the call to the blackbox here
+            global x
+            x = "/media/images/" + datetime.datetime.now().strftime("%y-%m-%d-%H-%M-%S")
             return HttpResponseRedirect('/fonts/result')
     else:
         form = DocumentForm()
@@ -20,4 +25,5 @@ def index(request):
 
 
 def result(request):
+    # json whatever = blackbox(x)
     return render(request, 'fonts/result.html')

@@ -1,8 +1,103 @@
 <!DOCTYPE html>
-<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+  <title>fontr</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    .table>tbody+tbody.no-border {
+      border: none;
+    }
+  </style>
 </head>
-<body>  <p>hello world</p></body>
+<body>
+
+<div class="jumbotron text-center">
+  <h1>fontr</h1>
+  <p>Font analysis results</p>
+</div>
+
+<div class="container">
+	<center>
+    		<form action="/">
+                <input type="submit" value="Home"/>
+            </form>
+	</center>
+
+<div class="profile">
+
+<center>
+  <table class="table table-hover" table id= "userdata">
+    <thead>
+        <th>Font</th>
+        <th>Probability</th>
+    </thead>
+    <tbody class="" id="first-table">
+
+     </tbody>
+
+     <tbody class="no-border" id="second-table">
+
+     </tbody>
+  </table>
+<hr>
+
+
+
+ </center>
+</div>
+<hr>
+
+
+
+</div>
+</div>
+
+<script>
+  $(function() {
+  var text = [];
+//      getjson will retrieve a json object from a url, reconfigure it to take a django passed json
+    $.getJSON('output.json', function(data) {
+  console.log(data);
+  $.each(data.text, function(i, f) {
+    if(i < 3){
+      var tblRow = "<tr>" + "<td>" + "<a href= 'http://fonts.google.com/specimen/" + f.font + "'>"+f.font +"</a>"+ "</td>" +
+              "<td>" +
+              "<div class='progress'><div class='progress-bar' style='width:" + (f.popularity*100).toFixed(2) + "%'>" + (f.popularity*100).toFixed(2) + "%" + "</div></div>"
+               + "</td>" + "</tr>"
+              $(tblRow).appendTo("#first-table");
+    }
+       });
+  $.each(data.text, function(i, f) {
+    if(i==3) {
+      var tblRow2 = "<tr bgcolor='grey'>" + "<td>" + "</td>" +
+      "<td>" + "</td>" + "</tr>"
+      $(tblRow2).appendTo("#second-table");
+      $(tblRow2).appendTo("#second-table");
+      var tblRow2 = "<tr>" + "<td>" + "</td>" +
+      "<td>" + "</td>" + "</tr>"
+      $(tblRow2).appendTo("#second-table");
+    }
+    if(i >= 3 && f.popularity > 0.90){
+      var tblRow2 = "<tr>" + "<td>" + "<a href= 'http://fonts.google.com/specimen/" + f.font + "'>"+f.font +"</a>"+ "</td>" +
+              "<td>" +
+              "<div class='progress'><div class='progress-bar' style='width:" + (f.popularity*100).toFixed(2) + "%'>" + (f.popularity*100).toFixed(2) + "%" + "</div></div>"
+               + "</td>" + "</tr>"
+      $(tblRow2).appendTo("#second-table");
+      }
+   });
+
+   });
+   });
+</script>
+
+</body>
 </html>
+
+
+
+<!--TO DO: display the json object with js that is written after blackbox is finished
+Probably need to just copy paste the whole file -->
