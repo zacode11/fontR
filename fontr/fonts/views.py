@@ -25,5 +25,10 @@ def index(request):
 
 
 def result(request):
-    # json whatever = blackbox(x)
-    return render(request, 'fonts/result.html')
+    # json data = blackbox(x)
+
+    fonts = []
+    for i in xrange(10):
+        fonts.append((data["data"][i]["font"],(int)(data["data"][i]["popularity"])))
+
+    return render(request, 'fonts/result.html', {'fonts':fonts})
