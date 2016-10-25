@@ -80,7 +80,7 @@ class SVM(object):
             prediction = self.model.decision_function([features])
             if prediction > 0:
                 char_img = cv2.resize(sub_img[0], (32, 32), cv2.INTER_CUBIC)
-                cv2.imwrite('characters/ ' + str(num) + '.png', char_img)
+                cv2.imwrite('characters/' + str(num) + '.png', char_img)
                 num += 1
                 boxes.append([sub_img[1], sub_img[2], sub_img[3], sub_img[4]])
         for box in boxes:
