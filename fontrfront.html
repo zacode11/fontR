@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+
+<head>
+  <title>fontr</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    .table>tbody+tbody.no-border {
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+<font face = "inconsolata">
+  <h1>fontr</h1> 
+  <p>Upload an image of your font</p>
+  </font>
+</div>
+  
+<div class="container">
+	<center>
+    		<input type="file" accept="image/*" onchange="loadFile(event)">
+     		<img id="output"/ width = 43%>
+	</center>
+
+<div class="profile">
+
+<center>
+  <table class="table table-hover" table id= "userdata"> 
+    <thead>
+        <th>Font</th>
+        <th>Probability</th>
+    </thead>
+    <tbody class="" id="first-table">
+
+     </tbody>
+
+     <tbody class="no-border" id="second-table">
+
+     </tbody>
+  </table>
+<hr>
+
+
+
+ </center>
+</div>
+<hr>
+
+
+
+<div class="progress">
+  <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="70"
+  aria-valuemin="0" aria-valuemax="100" style="width:70%">
+    70%
+  </div>
+</div>
+</div>
+
+<script>
+//uploads and displays image
+    var loadFile = function(event) {
+        var output = document.getElementById('output');
+            output.src = URL.createObjectURL(event.target.files[0]);
+              };
+
+  $(function() { //gets the json file and calls it "data"
+  var text = [];
+    $.getJSON('output.json', function(data) {
+  console.log(data);
+
+//i is index of the front and f is like the font name and probability 
+  $.each(data.text, function(i, f) { 
+    if(i < 3){ //top 3 fonts
+    //fills a table row with the font name (f.font) and makes it a clickable link
+      var tblRow = "<tr>" + "<td>" + "<a href= 'http://fonts.google.com/specimen/" + f.font + "'>"+f.font +"</a>"+ "</td>" +
+              "<td>" + 
+              //adds a progress bar and makes the probability a percent with 2 decimals
+              "<div class='progress'><div class='progress-bar' style='width:" + (f.popularity*100).toFixed(2) + "%'>" + (f.popularity*100).toFixed(2) + "%" + "</div></div>"
+               + "</td>" + "</tr>"
+              $(tblRow).appendTo("#first-table");  //adds it to the table
+    }
+       });
+
+  $.each(data.text, function(i, f) {
+  	//if the index is 3 or greater, put the data on a different table
+    if(i==3) {
+      var tblRow2 = "<tr bgcolor='grey'>" + "<td>" + "</td>" +
+      "<td>" + "</td>" + "</tr>"
+      $(tblRow2).appendTo("#second-table"); 
+      $(tblRow2).appendTo("#second-table");
+      var tblRow2 = "<tr>" + "<td>" + "</td>" +
+      "<td>" + "</td>" + "</tr>"
+      $(tblRow2).appendTo("#second-table");
+    }
+    //makes sure that the probability is over 90%
+    if(i >= 3 && f.popularity > 0.90){
+      var tblRow2 = "<tr>" + "<td>" + "<a href= 'http://fonts.google.com/specimen/" + f.font + "'>"+f.font +"</a>"+ "</td>" +
+              "<td>" + 
+              "<div class='progress'><div class='progress-bar' style='width:" + (f.popularity*100).toFixed(2) + "%'>" + (f.popularity*100).toFixed(2) + "%" + "</div></div>"
+               + "</td>" + "</tr>"
+      $(tblRow2).appendTo("#second-table");  
+      }
+   });
+      
+   });
+   });
+
+</script>
+
+</body>
+</html>
