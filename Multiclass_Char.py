@@ -23,7 +23,7 @@ def classify_text(img_dir_name, clf_path):
     
     for file in predict_img:
         image = Image.open(file)
-        predict_data.append(image_preprocess(image))
+        predict_data.append(gray_image_to_array(image))
         
     predicted = clf.predict(np.asarray(predict_data).reshape(len(predict_data), -1))
     
@@ -61,6 +61,13 @@ def load_predict_set(dir_name):
         
     return new_predict_set
     
+def gray_image_to_array(img):
+    img_array = np.asarray(img)
+    binary = img_array > 0
+    bin_array = binary.astype(int)
+    
+    return bin_array
+    
 def image_preprocess(img):
     img = img.resize((32, 32), Image.ANTIALIAS)
     rgb_data = np.asarray(img)
@@ -77,9 +84,6 @@ if __name__ == '__main__':
     predict_set = []
     expected_set = []
     
-    image_preprocess(Image.open('C:/Users/Justin/Desktop/Programming/College/CS_196/Project/Text_Test/a-low-1.png'))
-    
-    '''
     for i in range(26):
         os.chdir('C:/Users/Justin/Desktop/Programming/College/CS_196/Project/EnglishImg/English/Img/GoodImg/Bmp/Sample0' + str(i + 11))
         count = 0
@@ -126,5 +130,4 @@ if __name__ == '__main__':
     
     with open('C:/Users/Justin/Desktop/Programming/College/CS_196/Project/text_classifier.pkl', 'wb') as clf_pkl:
         pickle.dump(clf, clf_pkl)
-    '''
     
