@@ -23,7 +23,7 @@ def pixel_intensity_from_filename(filename):
     Given a filename, returns the grayscale pixel intensity for every pixel.
     Input a any picture, will be scaled to 32x32. 
     """
-    
+    print("LOCATION: " +os.getcwd())
     im = Image.open(filename) #Can be many different formats.
     pix = im.load()
     width,height = im.size
@@ -68,8 +68,8 @@ def get_font_probabs(char, pixels):
     Given: directory contains either .csv or .pkl for classifier to generate from for all letters.
     """
     classifier = None
-    if os.path.isfile(char + '.pkl'):
-        classifier = joblib.load(char+'.pkl')
+    if os.path.isfile('pickles/' + char + '.pkl'):
+        classifier = joblib.load("pickles/"+char+'.pkl')
     else:
         classifier = AdaBoostClassifier(n_estimators=100)
         #no header
@@ -148,7 +148,9 @@ def to_json(frame_dict):
     dict_list = []
     for key in sorted_dict:
         d = {}
-        d[key] = sorted_dict[key]
+        d['font']=key
+        d['probability']=sorted_dict[key]
+        #d[key] = sorted_dict[key]
         dict_list.append(d)
     return json.dumps({'data': dict_list})
 
@@ -162,4 +164,3 @@ def black_box(char_filename_list):
         list_pixels[index] = (list_pixels[index][0], get_font_probabs(list_pixels[index][0], list_pixels[index][1]))
     return to_json(sum_probabilities(scale_probabilities(list_pixels)))
 
-response = black_box(file_struct)

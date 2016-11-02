@@ -36,14 +36,14 @@
         <th>Probability</th>
     </thead>
     <tbody class="" id="first-table">
-    {% for font in fonts %}
+    {% for font, prob in fonts %}
     <tr>
     <td>
-    <a href= "http://fonts.google.com/specimen/{{font[0]}}/">{{font[0]}}</a>
-    <p>{{font[1]}}%</p>
+    <a href= "http://fonts.google.com/specimen/{{font}}/">{{font}}</a>
+    <p>{{prob}}%</p>
     </td>
     </tr>
-    {{%endfor%}}
+    {%endfor%}
      </tbody>
 
      <tbody class="no-border" id="second-table">
