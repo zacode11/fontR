@@ -1,0 +1,14 @@
+from svm import SVM
+import Multiclass_Char import classify_text
+
+(remember to put all the files they wrote into the fonts folder and create a folder named 'characters' in the fonts folder
+
+
+
+
+svm = SVM('media/')
+svm.test('images/' + x)
+tuples = classify_text('characters/', 'text_classifier.pkl')
+json_thing = whateverdrakewrote(tuples)
+
+then pass json_thing to the render

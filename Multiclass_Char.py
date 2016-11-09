@@ -78,6 +78,7 @@ def image_preprocess(img):
     
     return threshed_data
     
+'''
 if __name__ == '__main__':
     train_set = []
     label_set = []
@@ -130,4 +131,4 @@ if __name__ == '__main__':
     
     with open('C:/Users/Justin/Desktop/Programming/College/CS_196/Project/text_classifier.pkl', 'wb') as clf_pkl:
         pickle.dump(clf, clf_pkl)
-    
+    '''
