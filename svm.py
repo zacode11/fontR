@@ -31,7 +31,7 @@ class SVM(object):
         return x, y
 
     def train(self):
-        self.model.fit(self.x, self.y)
+        #self.model.fit(self.x, self.y)
         with open('weights.pkl', 'wb') as clf_pkl:
             pickle.dump(self.model, clf_pkl)
 
@@ -40,7 +40,6 @@ class SVM(object):
 
     def train_and_score(self, train_img_dir):
         train_img_names = os.listdir(train_img_dir)
-        print(len(train_img_names))
         shuffle(train_img_names)
         x = []
         y = []
@@ -70,7 +69,7 @@ class SVM(object):
             features.append(self.get_features(img))
         print(self.model.score(features, labels))
 
-    def test(self, img_name):
+    def extract_characters(self, img_name):
         preprocessor = Preprocessor(img_name)
         num = 0
         boxes = []
@@ -83,13 +82,17 @@ class SVM(object):
                 cv2.imwrite('characters/' + str(num) + '.png', char_img)
                 num += 1
                 boxes.append([sub_img[1], sub_img[2], sub_img[3], sub_img[4]])
-        for box in boxes:
-            x, y = box[0], box[1]
-            w, h = box[2], box[3]
-            cv2.rectangle(preprocessor.get_img(), (x, y), (x + w, y + h), (0, 255, 0), 1)
-        cv2.imshow('characters', preprocessor.get_img())
-        cv2.waitKey(20000)
 
+    def draw_boxes(self, img_name):
+        preprocessor = Preprocessor(img_name)
+        sub_imgs = preprocessor.get_sub_imgs()
+        box_image = preprocessor.get_img()
+        for sub_img in sub_imgs:
+            x, y = sub_img[1], sub_img[2]
+            w, h = sub_img[3], sub_img[4]
+            cv2.rectangle(box_image, (x, y), (x + w, y + h), (0, 255, 0), 1)
+        cv2.imwrite('boxes.png', box_image)
+    
     def get_features(self, img):
         hog = cv2.HOGDescriptor()
         # flatten column vector into row vector
