@@ -10,7 +10,9 @@ class Preprocessor(object):
         return self._img
 
     def get_sub_imgs(self):
-        '''finds bounding boxes around contours and returns list of these boxes'''
+        '''
+        finds bounding boxes around contours and returns list of these boxes
+        '''
         # convert to grayscale, remove noise, and make black and white
         # using otsu threshold
         contours = self.get_contours()
@@ -29,13 +31,17 @@ class Preprocessor(object):
         return sub_imgs
 
     def get_contours(self):
-        '''returns contours of img'''
+        '''
+        returns contours of img
+        '''
         thresh_img = self.otsu_threshold()
         blah, contours, hierarchy = cv2.findContours(thresh_img, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         return contours
 
     def otsu_threshold(self):
-        '''Applies otsu's threshold'''
+        '''
+        Applies otsu's threshold to an image and returns the image
+        '''
         gray_img = cv2.cvtColor(self._img, cv2.COLOR_BGR2GRAY)
         denoised_img = cv2.fastNlMeansDenoising(gray_img, None, 10)
         ret, thresh_img = cv2.threshold(denoised_img, 0, 255, cv2.THRESH_BINARY +
