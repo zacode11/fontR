@@ -7,13 +7,18 @@ import pickle
 class SVM(object):
 
     def __init__(self, train_img_dir):
-        class_weights = {0: 0.5, 1: 0.5}
+        # class_weights = {0: 0.5, 1: 0.5}
         #self.model = LinearSVC(class_weight=class_weights)
         with open('weights.pkl', 'rb') as clf_pkl:
             self.model = pickle.load(clf_pkl)
         #self.x, self.y = self.get_x_and_y(train_img_dir)
     
     def get_x_and_y(self, train_img_dir):
+        '''
+        Given a directory of training images, return a list
+        containing features for each image as well as a list
+        containing the labels of each image
+        '''
         train_img_names = os.listdir(train_img_dir)
         shuffle(train_img_names)
         x = []
@@ -31,13 +36,14 @@ class SVM(object):
         return x, y
 
     def train(self):
-        #self.model.fit(self.x, self.y)
+        '''
+        Train the linear support vector machine
+        '''
+        self.model.fit(self.x, self.y)
         with open('weights.pkl', 'wb') as clf_pkl:
             pickle.dump(self.model, clf_pkl)
 
-    def score(self):
-        print(self.model.score(self.x, self.y))
-
+    # not really needed
     def train_and_score(self, train_img_dir):
         train_img_names = os.listdir(train_img_dir)
         shuffle(train_img_names)
@@ -70,9 +76,14 @@ class SVM(object):
         print(self.model.score(features, labels))
 
     def extract_characters(self, img_name):
+        '''
+        Given an image, write sub images likely to contain
+        characters to a directory and return a list containing
+        the coordinates of these sub images
+        '''
         preprocessor = Preprocessor(img_name)
-        num = 0
         boxes = []
+        num = 0
         sub_imgs = preprocessor.get_sub_imgs()
         for sub_img in sub_imgs:
             features = self.get_features(sub_img[0])
@@ -82,18 +93,27 @@ class SVM(object):
                 cv2.imwrite('characters/' + str(num) + '.png', char_img)
                 num += 1
                 boxes.append([sub_img[1], sub_img[2], sub_img[3], sub_img[4]])
+        return boxes
 
     def draw_boxes(self, img_name):
+        '''
+        Given an image, draw boxes around regions likely to
+        contain characters
+        '''
         preprocessor = Preprocessor(img_name)
-        sub_imgs = preprocessor.get_sub_imgs()
+        boxes = self.extract_characters(img_name)
         box_image = preprocessor.get_img()
-        for sub_img in sub_imgs:
-            x, y = sub_img[1], sub_img[2]
-            w, h = sub_img[3], sub_img[4]
+        for box in boxes:
+            x, y = box[0], box[1]
+            w, h = box[2], box[3]
             cv2.rectangle(box_image, (x, y), (x + w, y + h), (0, 255, 0), 1)
         cv2.imwrite('boxes.png', box_image)
     
     def get_features(self, img):
+        '''
+        Given an image, return its features
+        (histogram of oriented gradients)
+        '''
         hog = cv2.HOGDescriptor()
         # flatten column vector into row vector
         h = hog.compute(img)
@@ -102,7 +122,10 @@ class SVM(object):
         return np.array(h)[0].tolist()
 
     def otsu_threshold(self, img):
-        '''Applies otsu's threshold'''
+        '''
+        Given an image, apply otsu's threshold to the image
+        and return the image
+        '''
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         #gray_img = cv2.fastNlMeansDenoising(gray_img, None, 10)
         ret, gray_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY +
