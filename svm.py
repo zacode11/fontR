@@ -37,7 +37,7 @@ class SVM(object):
 
     def train(self):
         '''
-        Train the linear support vector machine
+        Train the linear support vector machine and put in pickle file
         '''
         self.model.fit(self.x, self.y)
         with open('weights.pkl', 'wb') as clf_pkl:
@@ -82,33 +82,24 @@ class SVM(object):
         the coordinates of these sub images
         '''
         preprocessor = Preprocessor(img_name)
-        boxes = []
+        # for drawing boxes around suspected characters
+        box_img = preprocessor.get_img()
+        # image number
         num = 0
-        sub_imgs = preprocessor.get_sub_imgs()
+        sub_imgs = preprocessor.get_contours()
         for sub_img in sub_imgs:
             features = self.get_features(sub_img[0])
             prediction = self.model.decision_function([features])
+            # if it's a character
             if prediction > 0:
                 char_img = cv2.resize(sub_img[0], (32, 32), cv2.INTER_CUBIC)
                 cv2.imwrite('characters/' + str(num) + '.png', char_img)
                 num += 1
-                boxes.append([sub_img[1], sub_img[2], sub_img[3], sub_img[4]])
-        return boxes
+                x, y = sub_img[1], sub_img[2]
+                w, h = sub_img[3], sub_img[4]
+                cv2.rectangle(box_img, (x, y), (x + w, y + h), (0, 255, 0), 1)
+        cv2.imwrite('boxes.png', box_img)
 
-    def draw_boxes(self, img_name):
-        '''
-        Given an image, draw boxes around regions likely to
-        contain characters
-        '''
-        preprocessor = Preprocessor(img_name)
-        boxes = self.extract_characters(img_name)
-        box_image = preprocessor.get_img()
-        for box in boxes:
-            x, y = box[0], box[1]
-            w, h = box[2], box[3]
-            cv2.rectangle(box_image, (x, y), (x + w, y + h), (0, 255, 0), 1)
-        cv2.imwrite('boxes.png', box_image)
-    
     def get_features(self, img):
         '''
         Given an image, return its features
@@ -127,7 +118,7 @@ class SVM(object):
         and return the image
         '''
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        #gray_img = cv2.fastNlMeansDenoising(gray_img, None, 10)
+        # gray_img = cv2.fastNlMeansDenoising(gray_img, None, 10)
         ret, gray_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY +
                                    cv2.THRESH_OTSU)
         return gray_img
