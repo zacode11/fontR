@@ -1,3 +1,4 @@
 # fontR
-Determining fonts from an image.
-# Preorder your copy today and receive an exclusive thing.
+Using machine learning to determine the font within an image. 
+
+
