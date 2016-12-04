@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
 
@@ -33,13 +34,9 @@ def index(request):
 
 def result(request):
     # json data = blackbox(x)
-    
-    data = json.loads(bb.black_box([('A',"16-10-26-00-58-31")]))
-    print(type(data))
+    with open('output.txt', 'w') as f
+        json.dump(data, f, ensure_ascii=False)
 
-    fonts = []
-    for i in range(10):
-        fonts.append((data["data"][i]["font"],(int)(10000*(data["data"][i]["probability"]))))
-
-    return render(request, 'fonts/result.html', {'fonts':fonts})
+    return render(request, 'fonts/result.html')   # this may be incorrect because we no longer pass an HTTPResponse Object,
+  # look here if things are on fire
 
