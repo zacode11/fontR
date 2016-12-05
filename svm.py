@@ -8,7 +8,7 @@ class SVM(object):
 
     def __init__(self, train_img_dir):
         #self.model = LinearSVC(C=0.03125, class_weight='balanced')
-        with open('weights6.pkl', 'rb') as clf_pkl:
+        with open('weights.pkl', 'rb') as clf_pkl:
             self.model = pickle.load(clf_pkl)
         #self.x, self.y = self.get_x_and_y(train_img_dir)
     
@@ -43,7 +43,7 @@ class SVM(object):
         Train the linear support vector machine and put in pickle file
         '''
         self.model.fit(self.x, self.y)
-        with open('weights6.pkl', 'wb') as clf_pkl:
+        with open('weights7.pkl', 'wb') as clf_pkl:
             pickle.dump(self.model, clf_pkl)
 
     # not really needed
