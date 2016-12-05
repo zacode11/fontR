@@ -7,9 +7,8 @@ import pickle
 class SVM(object):
 
     def __init__(self, train_img_dir):
-        # class_weights = {0: 0.5, 1: 0.5}
-        #self.model = LinearSVC(class_weight=class_weights)
-        with open('weights.pkl', 'rb') as clf_pkl:
+        #self.model = LinearSVC(C=0.03125, class_weight='balanced')
+        with open('weights6.pkl', 'rb') as clf_pkl:
             self.model = pickle.load(clf_pkl)
         #self.x, self.y = self.get_x_and_y(train_img_dir)
     
@@ -23,16 +22,20 @@ class SVM(object):
         shuffle(train_img_names)
         x = []
         y = []
+        num = 0
         for train_img_name in train_img_names:
+            print(train_img_name, num)
             train_img = cv2.imread(train_img_dir + train_img_name)
             train_img = cv2.resize(train_img, (125, 125), cv2.INTER_CUBIC)
             train_img = self.otsu_threshold(train_img)
-            x.append(self.get_features(train_img))
+            features = self.get_features(train_img)
+            x.append(features)
             # if it's a character
-            if len(train_img_name) > 7:
+            if len(train_img_name) > 9:
                 y.append(1)
             else:
                 y.append(0)
+            num += 1
         return x, y
 
     def train(self):
@@ -40,7 +43,7 @@ class SVM(object):
         Train the linear support vector machine and put in pickle file
         '''
         self.model.fit(self.x, self.y)
-        with open('weights.pkl', 'wb') as clf_pkl:
+        with open('weights6.pkl', 'wb') as clf_pkl:
             pickle.dump(self.model, clf_pkl)
 
     # not really needed
@@ -49,13 +52,13 @@ class SVM(object):
         shuffle(train_img_names)
         x = []
         y = []
-        for train_img_name in train_img_names[:615]:
+        for train_img_name in train_img_names[:10000]:
             train_img = cv2.imread(train_img_dir + train_img_name)
             train_img = cv2.resize(train_img, (125, 125), cv2.INTER_CUBIC)
             train_img = self.otsu_threshold(train_img)
             x.append(self.get_features(train_img))
             # if it's a character
-            if len(train_img_name) > 7:
+            if len(train_img_name) > 8:
                 y.append(1)
             else:
                 y.append(0)
@@ -64,8 +67,8 @@ class SVM(object):
         # testing
         labels = []
         features = []
-        for img_name in train_img_names[615:]:
-            if len(img_name) > 7:
+        for img_name in train_img_names[10000:]:
+            if len(img_name) > 8:
                 labels.append(1)
             else:
                 labels.append(0)
@@ -90,14 +93,16 @@ class SVM(object):
         for sub_img in sub_imgs:
             features = self.get_features(sub_img[0])
             prediction = self.model.decision_function([features])
+            x, y = sub_img[1], sub_img[2]
+            w, h = sub_img[3], sub_img[4]
             # if it's a character
-            if prediction > 0:
+            if prediction > 0.5:
                 char_img = cv2.resize(sub_img[0], (32, 32), cv2.INTER_CUBIC)
                 cv2.imwrite('characters/' + str(num) + '.png', char_img)
                 num += 1
-                x, y = sub_img[1], sub_img[2]
-                w, h = sub_img[3], sub_img[4]
                 cv2.rectangle(box_img, (x, y), (x + w, y + h), (0, 255, 0), 1)
+            else:
+                cv2.rectangle(box_img, (x, y), (x + w, y + h), (0, 0, 255), 1)
         cv2.imwrite('boxes.png', box_img)
 
     def get_features(self, img):
@@ -118,7 +123,7 @@ class SVM(object):
         and return the image
         '''
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        # gray_img = cv2.fastNlMeansDenoising(gray_img, None, 10)
+        #gray_img = cv2.fastNlMeansDenoising(gray_img, None, 10)
         ret, gray_img = cv2.threshold(gray_img, 0, 255, cv2.THRESH_BINARY +
                                    cv2.THRESH_OTSU)
         return gray_img
