@@ -9,12 +9,10 @@ import datetime
 
 import json
 
-# from svm import SVM
-# import Multiclass_Char import classify_text
 
 import sys
 sys.path.insert(0, 'fonts/')
-import black_box as bb
+from . import black_box as bb
 
 x = ""
 def index(request):
@@ -33,7 +31,7 @@ def index(request):
 
 
 def result(request):
-    # json data = blackbox(x)
+    json data = bb.blackbox("media/images" + x)
     with open('output.txt', 'w') as f:
         json.dump(data, f, ensure_ascii=False)
 
