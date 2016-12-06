@@ -8,7 +8,7 @@ class SVM(object):
 
     def __init__(self, train_img_dir):
         #self.model = LinearSVC(C=0.03125, class_weight='balanced')
-        with open('weights.pkl', 'rb') as clf_pkl:
+        with open('weights4.pkl', 'rb') as clf_pkl:
             self.model = pickle.load(clf_pkl)
         #self.x, self.y = self.get_x_and_y(train_img_dir)
     
@@ -96,7 +96,7 @@ class SVM(object):
             w, h = sub_img[3], sub_img[4]
             # if it's a character, slight bias towards non character
             if prediction > 0.5:
-                char_img = cv2.resize(sub_img[0], (32, 32), cv2.INTER_CUBIC)
+                char_img = cv2.resize(sub_img[0], (256, 256), cv2.INTER_CUBIC)
                 cv2.rectangle(box_img, (x, y), (x + w, y + h), (0, 255, 0), 1)
                 char_imgs.append(char_img)
             else:
