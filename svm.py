@@ -43,7 +43,7 @@ class SVM(object):
         Train the linear support vector machine and put in pickle file
         '''
         self.model.fit(self.x, self.y)
-        with open('weights7.pkl', 'wb') as clf_pkl:
+        with open('weights3.pkl', 'wb') as clf_pkl:
             pickle.dump(self.model, clf_pkl)
 
     # not really needed
@@ -80,30 +80,29 @@ class SVM(object):
 
     def extract_characters(self, img_name):
         '''
-        Given an image, write sub images likely to contain
-        characters to a directory and return a list containing
-        the coordinates of these sub images
+        Given an image, extract sub images likely to contain characters,
+        draw boxes around these sub images, and return a list of these images
         '''
         preprocessor = Preprocessor(img_name)
         # for drawing boxes around suspected characters
         box_img = preprocessor.get_img()
-        # image number
-        num = 0
         sub_imgs = preprocessor.get_contours()
+        # list of likely characters
+        char_imgs = []
         for sub_img in sub_imgs:
             features = self.get_features(sub_img[0])
             prediction = self.model.decision_function([features])
             x, y = sub_img[1], sub_img[2]
             w, h = sub_img[3], sub_img[4]
-            # if it's a character
+            # if it's a character, slight bias towards non character
             if prediction > 0.5:
                 char_img = cv2.resize(sub_img[0], (32, 32), cv2.INTER_CUBIC)
-                cv2.imwrite('characters/' + str(num) + '.png', char_img)
-                num += 1
                 cv2.rectangle(box_img, (x, y), (x + w, y + h), (0, 255, 0), 1)
+                char_imgs.append(char_img)
             else:
                 cv2.rectangle(box_img, (x, y), (x + w, y + h), (0, 0, 255), 1)
         cv2.imwrite('boxes.png', box_img)
+        return char_imgs
 
     def get_features(self, img):
         '''
