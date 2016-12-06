@@ -16,7 +16,7 @@ class Preprocessor(object):
         thresh_img = self.otsu_threshold()
         # don't change thresh_img, we need it below
         img_for_contour = thresh_img.copy()
-        image, contours, hierarchy = cv2.findContours(img_for_contour, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(img_for_contour, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         sub_imgs = []
         img_height, img_width = thresh_img.shape
         for contour in contours:
@@ -26,7 +26,7 @@ class Preprocessor(object):
             #if w * h < 0.0001 * (img_height * img_width):
                 #continue
             sub_img = thresh_img[y:y+h, x:x+w]
-            sub_img = cv2.resize(sub_img, (125, 125), cv2.INTER_CUBIC)
+            sub_img = cv2.resize(sub_img, (128, 128), interpolation=cv2.INTER_CUBIC)
             sub_imgs.append([sub_img, x, y, w, h])
         return sub_imgs
 
