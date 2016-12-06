@@ -34,7 +34,7 @@ def index(request):
 
 def result(request):
     # json data = blackbox(x)
-    with open('output.txt', 'w') as f
+    with open('output.txt', 'w') as f:
         json.dump(data, f, ensure_ascii=False)
 
     return render(request, 'fonts/result.html')   # this may be incorrect because we no longer pass an HTTPResponse Object,
